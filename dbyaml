@@ -1,0 +1,41 @@
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "onlinefooddelivery"
+  namespace: "default"
+  labels:
+    app8: "onlinefooddelivery"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app8: "onlinefooddelivery"
+  template:
+    metadata:
+      labels:
+        app8: "onlinefooddelivery"
+    spec:
+      containers:
+      - name: "ofddb-sha256-1"
+        image: "gcr.io/charged-ground-326209/github.com/vidyashri928/ofddb@sha256:8a6fe089c359ea85d7b49a76d709fa601cff0ff534e41f70b3ca11865705cc5a"
+---
+apiVersion: "autoscaling/v2beta1"
+kind: "HorizontalPodAutoscaler"
+metadata:
+  name: "onlinefooddelivery-hpa-duml"
+  namespace: "default"
+  labels:
+    app8: "onlinefooddelivery"
+spec:
+  scaleTargetRef:
+    kind: "Deployment"
+    name: "onlinefooddelivery"
+    apiVersion: "apps/v1"
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+  - type: "Resource"
+    resource:
+      name: "cpu"
+      targetAverageUtilization: 80
